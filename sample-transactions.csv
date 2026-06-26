@@ -1,0 +1,26 @@
+date,description,amount,type
+2026-05-02,Tow job - Honda Civic,185.00,income
+2026-05-03,Tow job - Ford F150,240.00,income
+2026-05-03,Fuel,95.00,expense
+2026-05-05,AAA contract call,38.00,income
+2026-05-06,Tow job - BMW X5,310.00,income
+2026-05-07,Fuel,88.00,expense
+2026-05-08,AAA contract call,38.00,income
+2026-05-09,Driver wages,1200.00,expense
+2026-05-10,Tow job - Toyota Camry,165.00,income
+2026-05-12,Insurance premium,640.00,expense
+2026-05-13,AAA contract call,38.00,income
+2026-05-14,Tow job - Jeep Wrangler,275.00,income
+2026-05-15,Fuel,102.00,expense
+2026-05-16,Equipment repair,420.00,expense
+2026-05-17,Tow job - Nissan Altima,155.00,income
+2026-05-19,AAA contract call,38.00,income
+2026-05-20,Tow job - Chevy Tahoe,290.00,income
+2026-05-21,Fuel,91.00,expense
+2026-05-22,Driver wages,1200.00,expense
+2026-05-23,Tow job - Dodge Ram,265.00,income
+2026-05-26,AAA contract call,38.00,income
+2026-05-27,Tow job - Subaru Outback,180.00,income
+2026-05-28,Phone & dispatch software,145.00,expense
+2026-05-29,Tow job - Honda Accord,170.00,income
+2026-05-30,Fuel,97.00,expense
