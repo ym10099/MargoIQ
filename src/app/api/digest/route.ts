@@ -28,7 +28,6 @@ export async function POST(req: Request) {
         .join('\n')
     }
 
-    // Last 7 days of transactions summary
     const recentSummary = Array.isArray(recentTransactions) && recentTransactions.length > 0
       ? recentTransactions
           .map((t: any) => `  - ${t.txn_date} | ${t.description} | ${t.type === 'income' ? '+' : '-'}$${t.amount}`)

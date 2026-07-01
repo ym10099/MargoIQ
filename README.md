@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ProfitiQ — an AI CFO for small businesses
 
-## Getting Started
+ProfitiQ is a web app that turns a small business's raw financial data into plain-English answers: *Am I making money? Why? What should I do next?* It's built for owners who can't afford a full-time CFO but still need to understand their numbers.
 
-First, run the development server:
+The core idea: a spreadsheet just adds up your numbers. ProfitiQ adds them up, then uses an LLM to interpret the trend and recommend a concrete next action.
+
+## What it does
+
+- **CSV upload** — drop in transactions and get an instant profit-and-loss breakdown (revenue, expenses, net profit, margin, biggest expense category).
+- **Month-over-month trend** — an area chart showing whether the business is climbing or sinking over time.
+- **AI CFO insight** — the standout feature. Sends the calculated monthly trajectory to the Claude API, which returns a structured insight: the key number, *why* it's happening, and a recommended action.
+- **Nightly call logger ("Close out the night")** — a fast entry screen built for a real towing-company owner, so he can log each job at the end of his shift and see his nightly total instantly.
+- **Weekly digest** — an AI-generated 5-part summary of the week's performance.
+
+## How the Claude API integration works
+
+The app never asks the LLM to do math. All financial calculations happen in a pure, deterministic TypeScript engine (`src/lib/calculations.ts`). The **computed** results — monthly P&L trajectory — are then passed to the Claude API, which is prompted to return a strict JSON structure (`{ number, reason, action }`) that maps directly to the UI.
+
+This separation matters: numbers stay accurate and reproducible, while the LLM does what it's good at — interpreting the trend and giving forward-looking advice. The API layer lives in `src/app/api/insights/route.ts` and `src/app/api/digest/route.ts`.
+
+## Tech stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Database & auth:** Supabase (Postgres + Row Level Security)
+- **AI:** Anthropic Claude API (`claude-sonnet-4-6`)
+- **Charts:** Recharts
+- **CSV parsing:** PapaParse
+- **Language:** TypeScript
+
+## Running locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Requires a `.env.local` with `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `ANTHROPIC_API_KEY`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Status
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Active MVP. Built solo as a hands-on project in AI-powered product development — from database schema and auth through the LLM integration and UI.

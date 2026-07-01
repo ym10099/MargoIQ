@@ -77,3 +77,50 @@ export function calculatePnL(transactions: Transaction[]): PnL {
 function round(n: number): number {
   return Math.round(n * 100) / 100
 }
+
+// ---- Month-aware analysis (for trends, charts, and time-based AI) ----
+
+export type MonthlyPnL = {
+  month: string        // "2026-01"
+  label: string        // "Jan 2026"
+  revenue: number
+  expenses: number
+  netProfit: number
+  profitMargin: number
+  transactionCount: number
+}
+
+// Turn a flat list of transactions into one PnL summary per month,
+// sorted oldest → newest. Reuses calculatePnL so the math stays identical.
+export function calculateMonthly(transactions: Transaction[]): MonthlyPnL[] {
+  // Group transactions by their "YYYY-MM" prefix
+  const byMonth: Record<string, Transaction[]> = {}
+  for (const t of transactions) {
+    const key = t.txn_date.slice(0, 7) // "2026-01-15" -> "2026-01"
+    if (!byMonth[key]) byMonth[key] = []
+    byMonth[key].push(t)
+  }
+
+  const months = Object.keys(byMonth).sort() // chronological
+
+  return months.map((month) => {
+    const pnl = calculatePnL(byMonth[month])
+    return {
+      month,
+      label: monthLabel(month),
+      revenue: pnl.revenue,
+      expenses: pnl.expenses,
+      netProfit: pnl.netProfit,
+      profitMargin: pnl.profitMargin,
+      transactionCount: pnl.transactionCount,
+    }
+  })
+}
+
+// "2026-01" -> "Jan 2026"
+function monthLabel(month: string): string {
+  const [year, m] = month.split('-')
+  const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  const idx = parseInt(m, 10) - 1
+  return `${names[idx] ?? m} ${year}`
+}

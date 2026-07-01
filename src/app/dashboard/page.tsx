@@ -3,26 +3,25 @@
 import { useState, useEffect, useRef } from 'react'
 import Papa from 'papaparse'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { calculatePnL, type Transaction, type PnL } from '@/lib/calculations'
+import { calculatePnL, calculateMonthly, type Transaction, type PnL, type MonthlyPnL } from '@/lib/calculations'
+import ProfitTrend from '@/components/ProfitTrend'
 
 type Insight = { number: string; reason: string; action: string }
 
-// MeritFirst-style near-black theme with maroon glow
-const BG = '#0A0A0B'          // page background (near-black)
 const GLOW = 'radial-gradient(120% 80% at 50% 100%, #3A0E18 0%, #1A0A0E 38%, #0A0A0B 70%)'
-const PANEL = 'rgba(20,20,23,0.72)'   // card surface (slightly translucent so glow shows)
+const PANEL = 'rgba(20,20,23,0.72)'
 const PANEL_AI = 'rgba(12,15,13,0.72)'
-const BORDER = '#23232A'      // hairline borders
-const BORDER_AI = '#1B4030'   // AI panel border (faint green)
-const INK = '#F4F5F7'         // primary white text
-const SUB = '#9A9CA3'         // muted gray text
-const FAINT = '#5C5E66'       // faint text
+const BORDER = '#23232A'
+const BORDER_AI = '#1B4030'
+const INK = '#F4F5F7'
+const SUB = '#9A9CA3'
+const FAINT = '#5C5E66'
 
-// Accent pills (soft fill + matching border + bright text)
 const GREEN_FILL = '#0E2A1C'; const GREEN_BORDER = '#1F5C3E'; const GREEN_TEXT = '#3FD98A'
 const RED_FILL = '#2A1116'; const RED_BORDER = '#5C2230'; const RED_TEXT = '#F2607A'
-const BLUE_FILL = '#0F1E33'; const BLUE_BORDER = '#234A7A'; const BLUE_TEXT = '#5B9DF5'
+const BLUE_TEXT = '#5B9DF5'
 const AMBER = '#FBBF24'
 
 export default function DashboardPage() {
@@ -30,6 +29,7 @@ export default function DashboardPage() {
   const router = useRouter()
 
   const [pnl, setPnl] = useState<PnL | null>(null)
+  const [monthly, setMonthly] = useState<MonthlyPnL[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [status, setStatus] = useState('')
@@ -48,13 +48,13 @@ export default function DashboardPage() {
       setLoading(false)
       return
     }
-    setPnl(calculatePnL((data ?? []) as Transaction[]))
+    const txns = (data ?? []) as Transaction[]
+    setPnl(calculatePnL(txns))
+    setMonthly(calculateMonthly(txns))
     setLoading(false)
   }
 
-  useEffect(() => {
-    loadData()
-  }, [])
+  useEffect(() => { loadData() }, [])
 
   async function getInsight() {
     if (!pnl) return
@@ -65,7 +65,7 @@ export default function DashboardPage() {
       const res = await fetch('/api/insights', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pnl }),
+        body: JSON.stringify({ pnl, monthly }),
       })
       const data = await res.json()
       if (data.error) setError(`AI error: ${data.error}`)
@@ -114,40 +114,29 @@ export default function DashboardPage() {
     setSaving(true)
     setError('')
     setStatus('')
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       setError('You must be logged in to save. Please log in again.')
       setSaving(false)
       return
     }
-
     const { data: existing } = await supabase
       .from('transactions')
       .select('txn_date, description, amount, type')
       .eq('user_id', user.id)
-
     const seen = new Set(
-      (existing ?? []).map(
-        (r: any) => `${r.txn_date}|${r.description}|${r.amount}|${r.type}`
-      )
+      (existing ?? []).map((r: any) => `${r.txn_date}|${r.description}|${r.amount}|${r.type}`)
     )
-
     const newRows = parsedRows.filter(
-      (r) =>
-        !seen.has(`${r.txn_date}|${r.description}|${r.amount}|${r.type}`)
+      (r) => !seen.has(`${r.txn_date}|${r.description}|${r.amount}|${r.type}`)
     )
-
     const skipped = parsedRows.length - newRows.length
-
     if (newRows.length === 0) {
       setStatus(`All ${parsedRows.length} transactions are already saved. Nothing new to add.`)
       setParsedRows([])
       setSaving(false)
       return
     }
-
     const records = newRows.map((r) => ({
       user_id: user.id,
       txn_date: r.txn_date,
@@ -172,15 +161,11 @@ export default function DashboardPage() {
   }
 
   async function handleClearAll() {
-    const ok = window.confirm(
-      'Delete ALL your saved transactions? This cannot be undone.'
-    )
+    const ok = window.confirm('Delete ALL your saved transactions? This cannot be undone.')
     if (!ok) return
     setError('')
     setStatus('')
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       setError('You must be logged in to clear data. Please log in again.')
       return
@@ -209,16 +194,16 @@ export default function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: GLOW, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
-      {/* Sidebar */}
       <aside style={{ width: 200, background: 'transparent', borderRight: `0.5px solid ${BORDER}`, padding: '20px 14px', display: 'flex', flexDirection: 'column', gap: 5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28, padding: '0 6px' }}>
           <div style={{ width: 28, height: 28, borderRadius: 9, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0A0A0B', fontSize: 15 }}>✦</div>
           <span style={{ color: INK, fontSize: 16, fontWeight: 600 }}>ProfitiQ</span>
         </div>
-        <NavItem label="Dashboard" active />
-        <NavItem label="Transactions" />
-        <NavItem label="Weekly digest" />
-        <NavItem label="Settings" />
+        <NavItem label="Dashboard" href="/dashboard" active />
+        <NavItem label="Close out night" href="/close-out" />
+        <NavItem label="Transactions" href="/transactions" />
+        <NavItem label="Weekly digest" href="/weekly-digest" />
+        <NavItem label="Settings" href="/dashboard" />
         <div style={{ marginTop: 'auto' }}>
           <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 12px', borderRadius: 9, color: SUB, fontSize: 14 }}>
             Log out
@@ -226,9 +211,7 @@ export default function DashboardPage() {
         </div>
       </aside>
 
-      {/* Main */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* Top bar */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `0.5px solid ${BORDER}` }}>
           <div>
             <p style={{ fontSize: 15, fontWeight: 600, margin: 0, color: INK }}>Dashboard</p>
@@ -247,13 +230,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Content */}
         <div style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 880 }}>
           {loading && <p style={{ color: SUB }}>Loading your numbers…</p>}
 
           {!loading && pnl && pnl.transactionCount > 0 && (
             <>
-              {/* Hero */}
               <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 26, backdropFilter: 'blur(8px)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                   <span style={{ fontSize: 13, color: SUB, fontWeight: 500 }}>Net profit</span>
@@ -266,11 +247,10 @@ export default function DashboardPage() {
                 </div>
                 <CountUpNumber value={pnl.netProfit} />
                 <p style={{ color: SUB, fontSize: 14, margin: '10px 0 0' }}>
-                  <span style={{ color: profitable ? GREEN_TEXT : RED_TEXT }}>{pnl.profitMargin}%</span> margin this month
+                  <span style={{ color: profitable ? GREEN_TEXT : RED_TEXT }}>{pnl.profitMargin}%</span> margin overall
                 </p>
               </div>
 
-              {/* Metric cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
                 <MetricCard label="Revenue" value={money(pnl.revenue)} dot={GREEN_TEXT} />
                 <MetricCard label="Expenses" value={money(pnl.expenses)} dot={RED_TEXT} />
@@ -282,14 +262,14 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* AI CFO */}
+              <ProfitTrend data={monthly} />
+
               <div style={{ background: PANEL_AI, border: `0.5px solid ${BORDER_AI}`, borderRadius: 16, padding: '22px 24px', backdropFilter: 'blur(8px)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 18 }}>
                   <div style={{ width: 26, height: 26, borderRadius: 8, background: GREEN_FILL, display: 'flex', alignItems: 'center', justifyContent: 'center', color: GREEN_TEXT, fontSize: 15 }}>✦</div>
                   <span style={{ color: INK, fontSize: 14, fontWeight: 600 }}>Your AI CFO</span>
                   <span style={{ marginLeft: 'auto', fontSize: 11, color: FAINT }}>Powered by Claude</span>
                 </div>
-
                 {!insight && !insightLoading && (
                   <button onClick={getInsight} style={{ background: '#fff', color: '#0A0A0B', border: 'none', padding: '11px 20px', borderRadius: 9, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
                     Get AI insight
@@ -308,7 +288,7 @@ export default function DashboardPage() {
                 )}
               </div>
 
-              <p style={{ color: FAINT, fontSize: 12 }}>Based on {pnl.transactionCount} transactions</p>
+              <p style={{ color: FAINT, fontSize: 12 }}>Based on {pnl.transactionCount} transactions across {monthly.length} month{monthly.length === 1 ? '' : 's'}</p>
             </>
           )}
 
@@ -319,7 +299,6 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Parsed preview + save */}
           {status && <p style={{ color: GREEN_TEXT, fontSize: 14 }}>{status}</p>}
           {error && <p style={{ color: RED_TEXT, fontSize: 14 }}>⚠️ {error}</p>}
           {parsedRows.length > 0 && (
@@ -357,13 +336,10 @@ function CountUpNumber({ value }: { value: number }) {
       else setDisplay(value)
     }
     rafRef.current = requestAnimationFrame(tick)
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    }
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
   }, [value])
 
-  const text = (display < 0 ? '−$' : '$') +
-    Math.abs(Math.round(display)).toLocaleString('en-US')
+  const text = (display < 0 ? '−$' : '$') + Math.abs(Math.round(display)).toLocaleString('en-US')
 
   return (
     <p style={{ color: '#F4F5F7', fontSize: 48, fontWeight: 600, margin: 0, letterSpacing: -2 }}>
@@ -372,11 +348,14 @@ function CountUpNumber({ value }: { value: number }) {
   )
 }
 
-function NavItem({ label, active }: { label: string; active?: boolean }) {
+function NavItem({ label, active, href }: { label: string; active?: boolean; href: string }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 9, background: active ? 'rgba(255,255,255,0.06)' : 'transparent', color: active ? '#F4F5F7' : '#9A9CA3', fontSize: 14, fontWeight: active ? 600 : 400 }}>
+    <Link
+      href={href}
+      style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 9, background: active ? 'rgba(255,255,255,0.06)' : 'transparent', color: active ? '#F4F5F7' : '#9A9CA3', fontSize: 14, fontWeight: active ? 600 : 400, cursor: 'pointer', textDecoration: 'none' }}
+    >
       {label}
-    </div>
+    </Link>
   )
 }
 
@@ -408,10 +387,7 @@ function TypingRow({ bar, labelColor, label, text, color, delay }: { bar: string
       }
       type()
     }, delay * 450)
-    return () => {
-      clearTimeout(startDelay)
-      clearTimeout(timer)
-    }
+    return () => { clearTimeout(startDelay); clearTimeout(timer) }
   }, [text, delay])
 
   return (
