@@ -24,6 +24,9 @@ function emptyCall(id: number): Call {
   return { id, type: 'AAA', amount: '', miles: '', note: '' }
 }
 
+const TYPE_LABEL: Record<CallType, string> = { AAA: 'AAA', private: 'Private', cash: 'Cash' }
+const TYPE_COLOR: Record<CallType, string> = { AAA: BLUE_TEXT, private: '#C69BFF', cash: GREEN_TEXT }
+
 export default function CloseOutPage() {
   const supabase = createClient()
   const router = useRouter()
@@ -40,6 +43,18 @@ export default function CloseOutPage() {
 
   const subtotal = calls.reduce((s, c) => s + (parseFloat(c.amount) || 0), 0)
   const totalMiles = calls.reduce((s, c) => s + (parseFloat(c.miles) || 0), 0)
+
+  // Calls that are "real" (have an amount) — these are what get reviewed and saved
+  const validCalls = calls.filter((c) => parseFloat(c.amount) > 0)
+
+  // Totals broken down by type, for the review summary
+  const byType = validCalls.reduce(
+    (acc, c) => {
+      acc[c.type] += parseFloat(c.amount)
+      return acc
+    },
+    { AAA: 0, private: 0, cash: 0 } as Record<CallType, number>
+  )
 
   function updateCall(id: number, patch: Partial<Call>) {
     setCalls((prev) =>
@@ -241,6 +256,71 @@ export default function CloseOutPage() {
           >
             + Add another call
           </button>
+
+          {/* ---- REVIEW SECTION: shows once at least one call has an amount ---- */}
+          {validCalls.length > 0 && (
+            <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: '18px 20px', backdropFilter: 'blur(8px)' }}>
+              <p style={{ fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.5, margin: '0 0 14px' }}>
+                REVIEW TONIGHT'S CALLS
+              </p>
+
+              {/* Each valid call as a clean line */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {validCalls.map((c) => (
+                  <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: '#141417', borderRadius: 10, border: `0.5px solid ${BORDER}` }}>
+                    {/* Type badge */}
+                    <span style={{ fontSize: 11, fontWeight: 600, color: TYPE_COLOR[c.type], background: 'rgba(255,255,255,0.05)', border: `0.5px solid ${BORDER}`, padding: '3px 9px', borderRadius: 20, flexShrink: 0 }}>
+                      {TYPE_LABEL[c.type]}
+                    </span>
+
+                    {/* Miles + note */}
+                    <span style={{ flex: 1, color: SUB, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {c.miles && parseFloat(c.miles) > 0 ? `${c.miles} mi` : ''}
+                      {c.miles && parseFloat(c.miles) > 0 && c.note.trim() ? ' · ' : ''}
+                      {c.note.trim()}
+                    </span>
+
+                    {/* Amount */}
+                    <span style={{ color: GREEN_TEXT, fontSize: 15, fontWeight: 600, flexShrink: 0 }}>
+                      {money(parseFloat(c.amount))}
+                    </span>
+
+                    {/* Delete this call */}
+                    <button
+                      onClick={() => removeCall(c.id)}
+                      disabled={calls.length === 1}
+                      style={{ background: 'transparent', border: 'none', color: FAINT, cursor: calls.length === 1 ? 'default' : 'pointer', fontSize: 16, padding: 2, flexShrink: 0, opacity: calls.length === 1 ? 0.3 : 1 }}
+                      title="Remove this call"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Summary footer */}
+              <div style={{ marginTop: 16, paddingTop: 14, borderTop: `0.5px solid ${BORDER}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span style={{ color: SUB, fontSize: 13 }}>
+                    {validCalls.length} call{validCalls.length === 1 ? '' : 's'} · {totalMiles || 0} mi
+                  </span>
+                  <span style={{ color: INK, fontSize: 15, fontWeight: 600 }}>{money(subtotal)}</span>
+                </div>
+
+                {/* Breakdown by type — only show types that have money */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {(['AAA', 'private', 'cash'] as CallType[]).map((t) =>
+                    byType[t] > 0 ? (
+                      <span key={t} style={{ fontSize: 12, color: SUB, background: '#141417', border: `0.5px solid ${BORDER}`, padding: '4px 10px', borderRadius: 8 }}>
+                        <span style={{ color: TYPE_COLOR[t], fontWeight: 600 }}>{TYPE_LABEL[t]}</span>
+                        {' '}{money(byType[t])}
+                      </span>
+                    ) : null
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {error && <p style={{ color: RED_TEXT, fontSize: 14 }}>⚠️ {error}</p>}
 
