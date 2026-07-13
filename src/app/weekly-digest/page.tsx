@@ -102,9 +102,11 @@ export default function WeeklyDigestPage() {
       <aside style={{ width: 200, background: 'transparent', borderRight: `0.5px solid ${BORDER}`, padding: '20px 14px', display: 'flex', flexDirection: 'column', gap: 5 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28, padding: '0 6px' }}>
           <div style={{ width: 28, height: 28, borderRadius: 9, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0A0A0B', fontSize: 15 }}>✦</div>
-          <span style={{ color: INK, fontSize: 16, fontWeight: 600 }}>ProfitiQ</span>
+          <span style={{ color: INK, fontSize: 16, fontWeight: 600 }}>MargoIQ</span>
         </div>
         <NavItem label="Dashboard" href="/dashboard" />
+        <NavItem label="Close out night" href="/close-out" />
+        <NavItem label="Purchase orders" href="/purchase-orders" />
         <NavItem label="Transactions" href="/transactions" />
         <NavItem label="Weekly digest" href="/weekly-digest" active />
         <NavItem label="Settings" href="/dashboard" />
