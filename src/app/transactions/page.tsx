@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #DBEAFE 0%, #3B82F6 18%, #0E1F3A 45%, #0A0A0B 75%)'
+const GLOW = 'radial-gradient(120% 80% at 50% 100%, #2563EB 0%, #16326B 30%, #0D1B36 55%, #0A0A0B 80%)'
 const PANEL = 'rgba(20,20,23,0.72)'
 const BORDER = '#23232A'
 const INK = '#F4F5F7'
@@ -13,6 +13,7 @@ const SUB = '#9A9CA3'
 const FAINT = '#5C5E66'
 const GREEN_TEXT = '#3FD98A'
 const RED_TEXT = '#F2607A'
+const BLUE_TEXT = '#3B82F6'
 
 type Row = {
   id?: string
@@ -20,7 +21,10 @@ type Row = {
   description: string
   amount: number
   type: 'income' | 'expense'
+  project_id: string | null
 }
+
+type Project = { id: string; name: string }
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 function monthLabel(key: string) {
@@ -33,18 +37,28 @@ export default function TransactionsPage() {
   const router = useRouter()
 
   const [rows, setRows] = useState<Row[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>('all')
   const [month, setMonth] = useState('all')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [savingId, setSavingId] = useState<string | null>(null)
+  const [assignError, setAssignError] = useState('')
 
   async function load() {
-    const { data } = await supabase
-      .from('transactions')
-      .select('id, txn_date, description, amount, type')
-      .order('txn_date', { ascending: false })
-    setRows((data ?? []) as Row[])
+    const [{ data: txnData }, { data: projData }] = await Promise.all([
+      supabase
+        .from('transactions')
+        .select('id, txn_date, description, amount, type, project_id')
+        .order('txn_date', { ascending: false }),
+      supabase
+        .from('projects')
+        .select('id, name')
+        .order('created_at', { ascending: false }),
+    ])
+    setRows((txnData ?? []) as Row[])
+    setProjects((projData ?? []) as Project[])
     setLoading(false)
   }
 
@@ -71,6 +85,25 @@ export default function TransactionsPage() {
     const expenses = filtered.filter(r => r.type === 'expense').reduce((s, r) => s + r.amount, 0)
     return { income, expenses, net: income - expenses }
   }, [filtered])
+
+  async function handleAssign(row: Row, projectId: string) {
+    if (!row.id) return
+    setAssignError('')
+    setSavingId(row.id)
+    const newProjectId = projectId === '' ? null : projectId
+    const { error } = await supabase
+      .from('transactions')
+      .update({ project_id: newProjectId })
+      .eq('id', row.id)
+    if (error) {
+      setAssignError(`Could not assign: ${error.message}`)
+    } else {
+      setRows((prev) =>
+        prev.map((r) => (r.id === row.id ? { ...r, project_id: newProjectId } : r))
+      )
+    }
+    setSavingId(null)
+  }
 
   async function handleDelete(row: Row) {
     if (!row.id) return
@@ -100,6 +133,7 @@ export default function TransactionsPage() {
         <NavItem label="Dashboard" href="/dashboard" />
         <NavItem label="Close out night" href="/close-out" />
         <NavItem label="Purchase orders" href="/purchase-orders" />
+        <NavItem label="Projects" href="/projects" />
         <NavItem label="Transactions" href="/transactions" active />
         <NavItem label="Weekly digest" href="/weekly-digest" />
         <NavItem label="Settings" href="/dashboard" />
@@ -121,7 +155,7 @@ export default function TransactionsPage() {
         </div>
 
         {/* Content */}
-        <div style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 920 }}>
+        <div style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 1020 }}>
 
           {/* Summary strip */}
           {!loading && rows.length > 0 && (
@@ -168,6 +202,8 @@ export default function TransactionsPage() {
             </div>
           </div>
 
+          {assignError && <p style={{ color: RED_TEXT, fontSize: 13, margin: 0 }}>⚠️ {assignError}</p>}
+
           {loading && <p style={{ color: SUB }}>Loading…</p>}
 
           {!loading && filtered.length === 0 && (
@@ -182,17 +218,18 @@ export default function TransactionsPage() {
           {!loading && filtered.length > 0 && (
             <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
               {/* Header */}
-              <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr 90px 120px 40px', padding: '12px 18px', borderBottom: `0.5px solid ${BORDER}`, fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.4 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr 80px 150px 110px 40px', padding: '12px 18px', borderBottom: `0.5px solid ${BORDER}`, fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.4 }}>
                 <span>DATE</span>
                 <span>DESCRIPTION</span>
                 <span>TYPE</span>
+                <span>PROJECT</span>
                 <span style={{ textAlign: 'right' }}>AMOUNT</span>
                 <span />
               </div>
               {filtered.map((r, i) => (
                 <div
                   key={r.id ?? i}
-                  style={{ display: 'grid', gridTemplateColumns: '110px 1fr 90px 120px 40px', padding: '12px 18px', borderBottom: i === filtered.length - 1 ? 'none' : `0.5px solid ${BORDER}`, fontSize: 14, alignItems: 'center', transition: 'background 0.15s' }}
+                  style={{ display: 'grid', gridTemplateColumns: '100px 1fr 80px 150px 110px 40px', padding: '12px 18px', borderBottom: i === filtered.length - 1 ? 'none' : `0.5px solid ${BORDER}`, fontSize: 14, alignItems: 'center', transition: 'background 0.15s' }}
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
@@ -201,6 +238,28 @@ export default function TransactionsPage() {
                   <span style={{ fontSize: 11, color: r.type === 'income' ? GREEN_TEXT : RED_TEXT, fontWeight: 500 }}>
                     {r.type === 'income' ? 'Income' : 'Expense'}
                   </span>
+                  <select
+                    value={r.project_id ?? ''}
+                    onChange={(e) => handleAssign(r, e.target.value)}
+                    disabled={savingId === r.id}
+                    style={{
+                      background: '#141417',
+                      border: `0.5px solid ${r.project_id ? BLUE_TEXT : BORDER}`,
+                      borderRadius: 8,
+                      padding: '5px 8px',
+                      color: r.project_id ? BLUE_TEXT : FAINT,
+                      fontSize: 12,
+                      outline: 'none',
+                      cursor: 'pointer',
+                      maxWidth: 140,
+                      opacity: savingId === r.id ? 0.5 : 1,
+                    }}
+                  >
+                    <option value="" style={{ background: '#141417' }}>No project</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id} style={{ background: '#141417' }}>{p.name}</option>
+                    ))}
+                  </select>
                   <span style={{ textAlign: 'right', color: r.type === 'income' ? GREEN_TEXT : RED_TEXT, fontWeight: 600 }}>
                     {r.type === 'income' ? '+' : '−'}{money(r.amount).replace('-', '')}
                   </span>

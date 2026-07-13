@@ -10,7 +10,7 @@ import ProfitTrend from '@/components/ProfitTrend'
 
 type Insight = { number: string; reason: string; action: string }
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #DBEAFE 0%, #3B82F6 18%, #0E1F3A 45%, #0A0A0B 75%)'
+const GLOW = 'radial-gradient(120% 80% at 50% 100%, #2563EB 0%, #16326B 30%, #0D1B36 55%, #0A0A0B 80%)'
 const PANEL = 'rgba(20,20,23,0.72)'
 const PANEL_AI = 'rgba(12,15,13,0.72)'
 const BORDER = '#23232A'
@@ -201,6 +201,7 @@ export default function DashboardPage() {
         <NavItem label="Dashboard" href="/dashboard" active />
         <NavItem label="Close out night" href="/close-out" />
         <NavItem label="Purchase orders" href="/purchase-orders" />
+        <NavItem label="Projects" href="/projects" />
         <NavItem label="Transactions" href="/transactions" />
         <NavItem label="Weekly digest" href="/weekly-digest" />
         <NavItem label="Settings" href="/dashboard" />
