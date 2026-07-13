@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #3B82F6 0%, #1E4FA8 25%, #102A5C 50%, #0A0A0B 78%)'
+const GLOW = 'radial-gradient(120% 80% at 50% 100%, #16326B 0%, #0E2149 35%, #0A1226 60%, #0A0A0B 82%)'
 const PANEL = 'rgba(20,20,23,0.72)'
 const PANEL_AI = 'rgba(12,15,13,0.72)'
 const BORDER = '#23232A'
