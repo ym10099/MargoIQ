@@ -142,7 +142,8 @@ export default function PurchaseOrdersPage() {
         <NavItem label="Dashboard" href="/dashboard" />
         <NavItem label="Close out night" href="/close-out" />
         <NavItem label="Purchase orders" href="/purchase-orders" active />
-        <NavItem label="Transactions" href="/transactions" />        <NavItem label="Weekly digest" href="/weekly-digest" />
+        <NavItem label="Transactions" href="/transactions" />     
+        <NavItem label="Weekly digest" href="/weekly-digest" />
         <NavItem label="Settings" href="/dashboard" />
         <div style={{ marginTop: 'auto' }}>
           <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 12px', borderRadius: 9, color: SUB, fontSize: 14 }}>
@@ -281,3 +282,4 @@ function Field({ label, value, highlight }: { label: string; value: string; high
     </div>
   )
 }
+
