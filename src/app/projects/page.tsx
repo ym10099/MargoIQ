@@ -162,7 +162,7 @@ export default function ProjectsPage() {
           {!loading && projects.length === 0 && (
             <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
               <p style={{ color: INK, fontSize: 15, fontWeight: 600, margin: 0 }}>No projects yet</p>
-              <p style={{ color: SUB, fontSize: 13, margin: '8px 0 0' }}>Create a project, then assign transactions to it from the Transactions page.</p>
+              <p style={{ color: SUB, fontSize: 13, margin: '8px 0 0' }}>See profit per job or client. Create a project (like “Downtown tow contract” or “Spring ad campaign”), then assign transactions to it from the Transactions page — MargoiQ shows exactly which work makes you money.</p>
             </div>
           )}
 

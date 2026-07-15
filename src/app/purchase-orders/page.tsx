@@ -227,7 +227,7 @@ export default function PurchaseOrdersPage() {
           {!loading && saved.length === 0 && !result && !analyzing && (
             <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
               <p style={{ color: INK, fontSize: 15, fontWeight: 600, margin: 0 }}>No purchase orders yet</p>
-              <p style={{ color: SUB, fontSize: 13, margin: '8px 0 0' }}>Click "Upload PO" to analyze your first one — PDF or photo.</p>
+              <p style={{ color: SUB, fontSize: 13, margin: '8px 0 0' }}>Upload a photo or PDF of any purchase order or invoice. The AI reads it and pulls out the vendor, items, and totals automatically — no typing.</p>
             </div>
           )}
 

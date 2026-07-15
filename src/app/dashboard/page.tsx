@@ -296,7 +296,7 @@ export default function DashboardPage() {
           {!loading && pnl && pnl.transactionCount === 0 && (
             <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
               <p style={{ color: INK, fontSize: 16, fontWeight: 600, margin: 0 }}>No transactions yet</p>
-              <p style={{ color: SUB, fontSize: 14, margin: '8px 0 0' }}>Upload a CSV using the button above to see your profit.</p>
+              <p style={{ color: SUB, fontSize: 14, margin: '8px 0 0' }}>Download your transactions from your bank's website (look for “Export” or “Download” and choose CSV format), then click Upload CSV above. MargoiQ instantly shows your income, expenses, and profit. Works with Chase, Bank of America, Wells Fargo, QuickBooks, and most banks.</p>
             </div>
           )}
 
