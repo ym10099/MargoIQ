@@ -155,7 +155,7 @@ export default function CloseOutPage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `0.5px solid ${BORDER}` }}>
           <div>
             <p style={{ fontSize: 15, fontWeight: 600, margin: 0, color: INK }}>Close out the night</p>
-            <p style={{ fontSize: 12, color: FAINT, margin: 0 }}>{todayLabel} — log tonight's calls</p>
+            <p style={{ fontSize: 12, color: FAINT, margin: 0 }}>{todayLabel} — log each call from tonight (cash, card, or AAA) and MargoiQ totals your night</p>
           </div>
         </div>
 
