@@ -177,7 +177,7 @@ export default function TransactionsPage() {
             <select
               value={month}
               onChange={(e) => setMonth(e.target.value)}
-              style={{ background: '#141417', border: `0.5px solid ${BORDER}`, borderRadius: 10, padding: '10px 14px', color: INK, fontSize: 14, outline: 'none', cursor: 'pointer' }}
+              style={{ background: "#141417 url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%239A9CA3' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>\") no-repeat right 14px center", border: `0.5px solid ${BORDER}`, borderRadius: 10, padding: '10px 34px 10px 14px', color: INK, fontSize: 14, outline: 'none', cursor: 'pointer', WebkitAppearance: 'none', appearance: 'none' }}
             >
               <option value="all" style={{ background: '#141417' }}>All months</option>
               {months.map((m) => (
@@ -243,16 +243,18 @@ export default function TransactionsPage() {
                     onChange={(e) => handleAssign(r, e.target.value)}
                     disabled={savingId === r.id}
                     style={{
-                      background: '#141417',
+                      background: "#141417 url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'><path d='M1 1l3 3 3-3' stroke='%235C5E66' stroke-width='1.2' fill='none' stroke-linecap='round'/></svg>\") no-repeat right 8px center",
                       border: `0.5px solid ${r.project_id ? BLUE_TEXT : BORDER}`,
                       borderRadius: 8,
-                      padding: '5px 8px',
+                      padding: '5px 22px 5px 8px',
                       color: r.project_id ? BLUE_TEXT : FAINT,
                       fontSize: 12,
                       outline: 'none',
                       cursor: 'pointer',
-                      maxWidth: 140,
+                      maxWidth: 150,
                       opacity: savingId === r.id ? 0.5 : 1,
+                      WebkitAppearance: 'none',
+                      appearance: 'none',
                     }}
                   >
                     <option value="" style={{ background: '#141417' }}>No project</option>

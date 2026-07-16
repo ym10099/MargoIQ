@@ -12,13 +12,18 @@ const BLUE = '#3B82F6'
 
 type Msg = { role: 'user' | 'assistant'; content: string }
 
-const STARTERS = [
+const GENERAL_STARTERS = [
   'How did I do last month?',
   'What is my biggest expense?',
   'Where can I save money?',
 ]
+const PROJECT_STARTERS = [
+  'How is this project doing?',
+  'What is the biggest cost on this job?',
+  'How does this compare to my other jobs?',
+]
 
-export default function MargoChat() {
+export default function MargoChat({ projectId, projectName }: { projectId?: string; projectName?: string } = {}) {
   const supabase = createClient()
   const [summary, setSummary] = useState('')
   const [messages, setMessages] = useState<Msg[]>([])
@@ -70,7 +75,8 @@ export default function MargoChat() {
           .join('\n')
       }
       const unassigned = data.filter((t) => !t.project_id).length
-      setSummary(`MONTHLY TOTALS:\n${monthLines}\n\nTOP EXPENSES (all time):\n${topExpenses}\n\nPROJECTS (per-job profit):\n${projectLines}\nUnassigned transactions: ${unassigned}\n\nTOTAL TRANSACTIONS: ${data.length}`)
+      const focus = projectId && projectName ? `FOCUS: The user is currently viewing the project "${projectName}". Prioritize answering about this project unless asked otherwise.\n\n` : ''
+      setSummary(`${focus}MONTHLY TOTALS:\n${monthLines}\n\nTOP EXPENSES (all time):\n${topExpenses}\n\nPROJECTS (per-job profit):\n${projectLines}\nUnassigned transactions: ${unassigned}\n\nTOTAL TRANSACTIONS: ${data.length}`)
     }
     load()
   }, [])
@@ -108,7 +114,7 @@ export default function MargoChat() {
 
       {messages.length === 0 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {STARTERS.map((s) => (
+          {(projectId ? PROJECT_STARTERS : GENERAL_STARTERS).map((s) => (
             <button key={s} onClick={() => ask(s)} style={{ background: 'transparent', border: `0.5px solid ${BORDER}`, color: SUB, borderRadius: 20, padding: '7px 14px', fontSize: 12, cursor: 'pointer' }}>
               {s}
             </button>

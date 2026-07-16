@@ -170,7 +170,7 @@ export default function ProjectsPage() {
           {stats.map((p) => {
             const profitable = p.net >= 0
             return (
-              <div key={p.id} style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 14, padding: '18px 20px', backdropFilter: 'blur(8px)' }}>
+              <div key={p.id} onClick={() => router.push(`/projects/${p.id}`)} style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 14, padding: '18px 20px', backdropFilter: 'blur(8px)', cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -181,7 +181,7 @@ export default function ProjectsPage() {
                     </div>
                     {p.client && <p style={{ color: SUB, fontSize: 13, margin: '4px 0 0' }}>{p.client}</p>}
                   </div>
-                  <button onClick={() => deleteProject(p.id)} style={{ background: 'transparent', border: 'none', color: FAINT, cursor: 'pointer', fontSize: 12, padding: 2 }}>Delete</button>
+                  <button onClick={(e) => { e.stopPropagation(); deleteProject(p.id) }} style={{ background: 'transparent', border: 'none', color: FAINT, cursor: 'pointer', fontSize: 12, padding: 2 }}>Delete</button>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
