@@ -1,8 +1,8 @@
 import Link from 'next/link'
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #16326B 0%, #0E2149 35%, #0A1226 60%, #0A0A0B 82%)'
-const PANEL = 'rgba(20,20,23,0.72)'
-const BORDER = '#23232A'
+const GLOW = '#000000'
+const PANEL = '#0E0E13'
+const BORDER = '#2B2B35'
 const INK = '#F4F5F7'
 const SUB = '#9A9CA3'
 const FAINT = '#5C5E66'
@@ -13,7 +13,7 @@ export default function Home() {
     <div style={{ minHeight: '100vh', background: GLOW, fontFamily: 'Inter, system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
 
       {/* Top nav */}
-      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px', borderBottom: `0.5px solid ${BORDER}`, maxWidth: 1100, width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
+      <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 32px', borderBottom: `1px solid ${BORDER}`, maxWidth: 1100, width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
         <img src="/logo.png" alt="MargoiQ" style={{ height: 30 }} />
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <Link href="/login" style={{ color: SUB, fontSize: 14, textDecoration: 'none', padding: '9px 14px' }}>
@@ -27,7 +27,7 @@ export default function Home() {
 
       {/* Hero */}
       <section style={{ maxWidth: 780, margin: '0 auto', padding: '90px 32px 60px', textAlign: 'center' }}>
-        <p style={{ display: 'inline-block', fontSize: 12, color: BLUE, border: `0.5px solid ${BLUE}`, borderRadius: 20, padding: '4px 14px', margin: '0 0 22px', letterSpacing: 0.4 }}>
+        <p style={{ display: 'inline-block', fontSize: 12, color: BLUE, border: `1px solid ${BLUE}`, borderRadius: 20, padding: '4px 14px', margin: '0 0 22px', letterSpacing: 0.4 }}>
           YOUR AI CFO
         </p>
         <h1 style={{ color: INK, fontSize: 52, fontWeight: 700, margin: 0, lineHeight: 1.12, letterSpacing: -1 }}>
@@ -41,7 +41,7 @@ export default function Home() {
           <Link href="/login" style={{ background: BLUE, color: '#fff', fontSize: 16, fontWeight: 600, textDecoration: 'none', padding: '14px 28px', borderRadius: 11 }}>
             Get started free
           </Link>
-          <Link href="/demo" style={{ background: 'transparent', color: INK, fontSize: 16, fontWeight: 500, textDecoration: 'none', padding: '14px 28px', borderRadius: 11, border: `0.5px solid ${BORDER}` }}>
+          <Link href="/demo" style={{ background: 'transparent', color: INK, fontSize: 16, fontWeight: 500, textDecoration: 'none', padding: '14px 28px', borderRadius: 11, border: `1px solid ${BORDER}` }}>
             Try the live demo
           </Link>
         </div>
@@ -77,7 +77,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer style={{ marginTop: 'auto', borderTop: `0.5px solid ${BORDER}`, padding: '22px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 1100, width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
+      <footer style={{ marginTop: 'auto', borderTop: `1px solid ${BORDER}`, padding: '22px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: 1100, width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
         <img src="/logo.png" alt="MargoiQ" style={{ height: 20, opacity: 0.7 }} />
         <p style={{ color: FAINT, fontSize: 12, margin: 0 }}>
           © {new Date().getFullYear()} MargoiQ · margoiq.com
@@ -89,7 +89,7 @@ export default function Home() {
 
 function Feature({ title, body }: { title: string; body: string }) {
   return (
-    <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 14, padding: '22px 22px', backdropFilter: 'blur(8px)' }}>
+    <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 14, padding: '22px 22px', backdropFilter: 'blur(8px)' }}>
       <p style={{ color: INK, fontSize: 16, fontWeight: 600, margin: '0 0 8px' }}>{title}</p>
       <p style={{ color: SUB, fontSize: 14, lineHeight: 1.6, margin: 0 }}>{body}</p>
     </div>

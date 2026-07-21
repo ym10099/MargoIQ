@@ -4,10 +4,11 @@ import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import Sidebar from '@/components/Sidebar'
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #16326B 0%, #0E2149 35%, #0A1226 60%, #0A0A0B 82%)'
-const PANEL = 'rgba(20,20,23,0.72)'
-const BORDER = '#23232A'
+const GLOW = '#000000'
+const PANEL = '#0E0E13'
+const BORDER = '#2B2B35'
 const INK = '#F4F5F7'
 const SUB = '#9A9CA3'
 const FAINT = '#5C5E66'
@@ -126,28 +127,12 @@ export default function TransactionsPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: GLOW, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
       {/* Sidebar */}
-      <aside style={{ width: 200, background: 'transparent', borderRight: `0.5px solid ${BORDER}`, padding: '20px 14px', display: 'flex', flexDirection: 'column', gap: 5 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28, padding: '0 6px' }}>
-          <img src="/logo.png" alt="MargoiQ" style={{ height: 26 }} />
-        </div>
-        <NavItem label="Dashboard" href="/dashboard" />
-        <NavItem label="Close out night" href="/close-out" />
-        <NavItem label="Purchase orders" href="/purchase-orders" />
-        <NavItem label="Projects" href="/projects" />
-        <NavItem label="Transactions" href="/transactions" active />
-        <NavItem label="Weekly digest" href="/weekly-digest" />
-        <NavItem label="Settings" href="/settings" />
-        <div style={{ marginTop: 'auto' }}>
-          <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 12px', borderRadius: 9, color: SUB, fontSize: 14 }}>
-            Log out
-          </button>
-        </div>
-      </aside>
+      <Sidebar active="Transactions" />
 
       {/* Main */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Top bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `0.5px solid ${BORDER}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `1px solid ${BORDER}` }}>
           <div>
             <p style={{ fontSize: 15, fontWeight: 600, margin: 0, color: INK }}>Transactions</p>
             <p style={{ fontSize: 12, color: FAINT, margin: 0 }}>Every transaction you've uploaded</p>
@@ -172,12 +157,12 @@ export default function TransactionsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search descriptions…"
-              style={{ flex: 1, minWidth: 180, background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 10, padding: '10px 14px', color: INK, fontSize: 14, outline: 'none' }}
+              style={{ flex: 1, minWidth: 180, background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '10px 14px', color: INK, fontSize: 14, outline: 'none' }}
             />
             <select
               value={month}
               onChange={(e) => setMonth(e.target.value)}
-              style={{ background: "#141417 url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%239A9CA3' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>\") no-repeat right 14px center", border: `0.5px solid ${BORDER}`, borderRadius: 10, padding: '10px 34px 10px 14px', color: INK, fontSize: 14, outline: 'none', cursor: 'pointer', WebkitAppearance: 'none', appearance: 'none' }}
+              style={{ background: "#141417 url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%239A9CA3' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>\") no-repeat right 14px center", border: `1px solid ${BORDER}`, borderRadius: 10, padding: '10px 34px 10px 14px', color: INK, fontSize: 14, outline: 'none', cursor: 'pointer', WebkitAppearance: 'none', appearance: 'none' }}
             >
               <option value="all" style={{ background: '#141417' }}>All months</option>
               {months.map((m) => (
@@ -193,7 +178,7 @@ export default function TransactionsPage() {
                     padding: '10px 14px', borderRadius: 10, fontSize: 13, cursor: 'pointer', fontWeight: 500,
                     background: typeFilter === t ? (t === 'income' ? '#0E2A1C' : t === 'expense' ? '#2A1116' : 'rgba(255,255,255,0.08)') : 'transparent',
                     color: typeFilter === t ? (t === 'income' ? GREEN_TEXT : t === 'expense' ? RED_TEXT : INK) : SUB,
-                    border: `0.5px solid ${typeFilter === t ? (t === 'income' ? '#1F5C3E' : t === 'expense' ? '#5C2230' : '#444') : BORDER}`,
+                    border: `1px solid ${typeFilter === t ? (t === 'income' ? '#1F5C3E' : t === 'expense' ? '#5C2230' : '#444') : BORDER}`,
                   }}
                 >
                   {t === 'all' ? 'All' : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -207,7 +192,7 @@ export default function TransactionsPage() {
           {loading && <p style={{ color: SUB }}>Loading…</p>}
 
           {!loading && filtered.length === 0 && (
-            <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
+            <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
               <p style={{ color: INK, fontSize: 15, fontWeight: 600, margin: 0 }}>No transactions found</p>
               <p style={{ color: SUB, fontSize: 13, margin: '8px 0 0' }}>
                 {rows.length === 0 ? 'Upload a CSV from the dashboard to get started.' : 'Try a different search or filter.'}
@@ -216,9 +201,9 @@ export default function TransactionsPage() {
           )}
 
           {!loading && filtered.length > 0 && (
-            <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
+            <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, overflow: 'hidden', backdropFilter: 'blur(8px)' }}>
               {/* Header */}
-              <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr 80px 150px 110px 40px', padding: '12px 18px', borderBottom: `0.5px solid ${BORDER}`, fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.4 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr 80px 150px 110px 40px', padding: '12px 18px', borderBottom: `1px solid ${BORDER}`, fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.4 }}>
                 <span>DATE</span>
                 <span>DESCRIPTION</span>
                 <span>TYPE</span>
@@ -229,7 +214,7 @@ export default function TransactionsPage() {
               {filtered.map((r, i) => (
                 <div
                   key={r.id ?? i}
-                  style={{ display: 'grid', gridTemplateColumns: '100px 1fr 80px 150px 110px 40px', padding: '12px 18px', borderBottom: i === filtered.length - 1 ? 'none' : `0.5px solid ${BORDER}`, fontSize: 14, alignItems: 'center', transition: 'background 0.15s' }}
+                  style={{ display: 'grid', gridTemplateColumns: '100px 1fr 80px 150px 110px 40px', padding: '12px 18px', borderBottom: i === filtered.length - 1 ? 'none' : `1px solid ${BORDER}`, fontSize: 14, alignItems: 'center', transition: 'background 0.15s' }}
                   onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
@@ -244,7 +229,7 @@ export default function TransactionsPage() {
                     disabled={savingId === r.id}
                     style={{
                       background: "#141417 url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'><path d='M1 1l3 3 3-3' stroke='%235C5E66' stroke-width='1.2' fill='none' stroke-linecap='round'/></svg>\") no-repeat right 8px center",
-                      border: `0.5px solid ${r.project_id ? BLUE_TEXT : BORDER}`,
+                      border: `1px solid ${r.project_id ? BLUE_TEXT : BORDER}`,
                       borderRadius: 8,
                       padding: '5px 22px 5px 8px',
                       color: r.project_id ? BLUE_TEXT : FAINT,
@@ -304,7 +289,7 @@ function NavItem({ label, active, href }: { label: string; active?: boolean; hre
 
 function SummaryCard({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: 'rgba(20,20,23,0.72)', border: '0.5px solid #23232A', borderRadius: 12, padding: '14px 18px', backdropFilter: 'blur(8px)' }}>
+    <div style={{ background: '#0E0E13', border: '1px solid #2B2B35', borderRadius: 12, padding: '14px 18px', backdropFilter: 'blur(8px)' }}>
       <p style={{ fontSize: 11, color: '#5C5E66', fontWeight: 600, letterSpacing: 0.4, margin: '0 0 6px' }}>{label.toUpperCase()}</p>
       <p style={{ fontSize: 20, fontWeight: 600, margin: 0, color }}>{value}</p>
     </div>

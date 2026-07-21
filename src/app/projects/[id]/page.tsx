@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import Sidebar from '@/components/Sidebar'
 import MargoChat from '@/components/MargoChat'
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #16326B 0%, #0E2149 35%, #0A1226 60%, #0A0A0B 82%)'
-const PANEL = 'rgba(20,20,23,0.72)'
-const BORDER = '#23232A'
+const GLOW = '#000000'
+const PANEL = '#0E0E13'
+const BORDER = '#2B2B35'
 const INK = '#F4F5F7'
 const SUB = '#9A9CA3'
 const FAINT = '#5C5E66'
@@ -61,32 +62,16 @@ export default function ProjectDetailPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: GLOW, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
-      <aside style={{ width: 200, borderRight: '0.5px solid ' + BORDER, padding: '20px 14px', display: 'flex', flexDirection: 'column', gap: 5 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28, padding: '0 6px' }}>
-          <img src="/logo.png" alt="MargoiQ" style={{ height: 26 }} />
-        </div>
-        <NavItem label="Dashboard" href="/dashboard" />
-        <NavItem label="Close out night" href="/close-out" />
-        <NavItem label="Purchase orders" href="/purchase-orders" />
-        <NavItem label="Projects" href="/projects" active />
-        <NavItem label="Transactions" href="/transactions" />
-        <NavItem label="Weekly digest" href="/weekly-digest" />
-        <NavItem label="Settings" href="/settings" />
-        <div style={{ marginTop: 'auto' }}>
-          <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 12px', borderRadius: 9, color: SUB, fontSize: 14 }}>
-            Log out
-          </button>
-        </div>
-      </aside>
+      <Sidebar active="Projects" />
 
       <main style={{ flex: 1 }}>
-        <div style={{ padding: '16px 28px', borderBottom: '0.5px solid ' + BORDER, display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ padding: '16px 28px', borderBottom: '1px solid ' + BORDER, display: 'flex', alignItems: 'center', gap: 14 }}>
           <Link href="/projects" style={{ color: SUB, textDecoration: 'none', fontSize: 20, lineHeight: 1 }}>←</Link>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <p style={{ fontSize: 15, fontWeight: 600, margin: 0, color: INK }}>{loading ? 'Loading…' : name}</p>
               {!loading && txns.length > 0 && (
-                <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, background: profitable ? '#0E2A1C' : '#2A1116', color: profitable ? GREEN_TEXT : RED_TEXT, border: '0.5px solid ' + (profitable ? '#1F5C3E' : '#5C2230') }}>
+                <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, background: profitable ? '#0E2A1C' : '#2A1116', color: profitable ? GREEN_TEXT : RED_TEXT, border: '1px solid ' + (profitable ? '#1F5C3E' : '#5C2230') }}>
                   {profitable ? 'Profitable' : 'Losing money'}
                 </span>
               )}
@@ -103,7 +88,7 @@ export default function ProjectDetailPage() {
           </div>
 
           {biggest && (
-            <div style={{ background: PANEL, border: '0.5px solid ' + BORDER, borderRadius: 12, padding: '12px 18px', display: 'flex', gap: 20, alignItems: 'center' }}>
+            <div style={{ background: PANEL, border: '1px solid ' + BORDER, borderRadius: 12, padding: '12px 18px', display: 'flex', gap: 20, alignItems: 'center' }}>
               <p style={{ color: SUB, fontSize: 13, margin: 0 }}>
                 Biggest cost: <span style={{ color: INK, fontWeight: 600 }}>{biggest[0]}</span> at <span style={{ color: RED_TEXT, fontWeight: 600 }}>{money(biggest[1])}</span>
               </p>
@@ -114,19 +99,19 @@ export default function ProjectDetailPage() {
           {loading && <p style={{ color: SUB }}>Loading…</p>}
 
           {!loading && txns.length === 0 && (
-            <div style={{ background: PANEL, border: '0.5px solid ' + BORDER, borderRadius: 16, padding: 40, textAlign: 'center' }}>
+            <div style={{ background: PANEL, border: '1px solid ' + BORDER, borderRadius: 16, padding: 40, textAlign: 'center' }}>
               <p style={{ color: INK, fontSize: 15, fontWeight: 600, margin: 0 }}>No transactions assigned yet</p>
               <p style={{ color: SUB, fontSize: 13, margin: '8px 0 0' }}>Assign transactions to this project from the Transactions page to see its breakdown.</p>
             </div>
           )}
 
           {!loading && txns.length > 0 && (
-            <div style={{ background: PANEL, border: '0.5px solid ' + BORDER, borderRadius: 16, overflow: 'hidden' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr 90px 120px', padding: '12px 18px', borderBottom: '0.5px solid ' + BORDER, fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.4 }}>
+            <div style={{ background: PANEL, border: '1px solid ' + BORDER, borderRadius: 16, overflow: 'hidden' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr 90px 120px', padding: '12px 18px', borderBottom: '1px solid ' + BORDER, fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.4 }}>
                 <span>DATE</span><span>DESCRIPTION</span><span>TYPE</span><span style={{ textAlign: 'right' }}>AMOUNT</span>
               </div>
               {txns.map((t, i) => (
-                <div key={t.id} style={{ display: 'grid', gridTemplateColumns: '110px 1fr 90px 120px', padding: '12px 18px', borderBottom: i === txns.length - 1 ? 'none' : '0.5px solid ' + BORDER, fontSize: 14, alignItems: 'center' }}>
+                <div key={t.id} style={{ display: 'grid', gridTemplateColumns: '110px 1fr 90px 120px', padding: '12px 18px', borderBottom: i === txns.length - 1 ? 'none' : '1px solid ' + BORDER, fontSize: 14, alignItems: 'center' }}>
                   <span style={{ color: SUB, fontSize: 13 }}>{t.txn_date}</span>
                   <span style={{ color: INK, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 12 }}>{t.description}</span>
                   <span style={{ fontSize: 11, color: t.type === 'income' ? GREEN_TEXT : RED_TEXT, fontWeight: 500 }}>{t.type === 'income' ? 'Income' : 'Expense'}</span>
@@ -147,7 +132,7 @@ export default function ProjectDetailPage() {
 
 function Stat({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{ background: PANEL, border: '0.5px solid ' + BORDER, borderRadius: 14, padding: '16px 20px' }}>
+    <div style={{ background: PANEL, border: '1px solid ' + BORDER, borderRadius: 14, padding: '16px 20px' }}>
       <p style={{ fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.5, margin: '0 0 6px' }}>{label}</p>
       <p style={{ fontSize: 22, fontWeight: 600, margin: 0, color }}>{value}</p>
     </div>

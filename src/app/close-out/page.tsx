@@ -4,10 +4,11 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import Sidebar from '@/components/Sidebar'
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #16326B 0%, #0E2149 35%, #0A1226 60%, #0A0A0B 82%)'
-const PANEL = 'rgba(20,20,23,0.72)'
-const BORDER = '#23232A'
+const GLOW = '#000000'
+const PANEL = '#0E0E13'
+const BORDER = '#2B2B35'
 const INK = '#F4F5F7'
 const SUB = '#9A9CA3'
 const FAINT = '#5C5E66'
@@ -131,28 +132,12 @@ export default function CloseOutPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: GLOW, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
       {/* Sidebar */}
-      <aside style={{ width: 200, background: 'transparent', borderRight: `0.5px solid ${BORDER}`, padding: '20px 14px', display: 'flex', flexDirection: 'column', gap: 5 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28, padding: '0 6px' }}>
-          <img src="/logo.png" alt="MargoiQ" style={{ height: 26 }} />
-        </div>
-        <NavItem label="Dashboard" href="/dashboard" />
-        <NavItem label="Close out night" href="/close-out" active />
-        <NavItem label="Purchase orders" href="/purchase-orders" />
-        <NavItem label="Projects" href="/projects" />
-        <NavItem label="Transactions" href="/transactions" />
-        <NavItem label="Weekly digest" href="/weekly-digest" />
-        <NavItem label="Settings" href="/settings" />
-        <div style={{ marginTop: 'auto' }}>
-          <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 12px', borderRadius: 9, color: SUB, fontSize: 14 }}>
-            Log out
-          </button>
-        </div>
-      </aside>
+      <Sidebar active="Close out night" />
 
       {/* Main */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Top bar */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `0.5px solid ${BORDER}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `1px solid ${BORDER}` }}>
           <div>
             <p style={{ fontSize: 15, fontWeight: 600, margin: 0, color: INK }}>Close out the night</p>
             <p style={{ fontSize: 12, color: FAINT, margin: 0 }}>{todayLabel} — log each call from tonight (cash, card, or AAA) and MargoiQ totals your night</p>
@@ -163,7 +148,7 @@ export default function CloseOutPage() {
         <div style={{ padding: 28, display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 640 }}>
 
           {done && (
-            <div style={{ background: 'rgba(14,42,28,0.6)', border: `0.5px solid #1F5C3E`, borderRadius: 14, padding: '16px 20px', backdropFilter: 'blur(8px)' }}>
+            <div style={{ background: 'rgba(14,42,28,0.6)', border: `1px solid #1F5C3E`, borderRadius: 14, padding: '16px 20px', backdropFilter: 'blur(8px)' }}>
               <p style={{ color: GREEN_TEXT, fontSize: 15, fontWeight: 600, margin: 0 }}>
                 Night closed out — {done.count} call{done.count === 1 ? '' : 's'}, {money(done.total)} logged
               </p>
@@ -175,7 +160,7 @@ export default function CloseOutPage() {
           )}
 
           {/* Running totals */}
-          <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: '20px 24px', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, padding: '20px 24px', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
             <div>
               <p style={{ fontSize: 12, color: SUB, fontWeight: 500, margin: 0 }}>Tonight so far</p>
               <p style={{ color: GREEN_TEXT, fontSize: 40, fontWeight: 600, margin: '4px 0 0', letterSpacing: -1.5 }}>
@@ -190,7 +175,7 @@ export default function CloseOutPage() {
 
           {/* Call rows */}
           {calls.map((c, i) => (
-            <div key={c.id} style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 14, padding: 16, backdropFilter: 'blur(8px)' }}>
+            <div key={c.id} style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 14, padding: 16, backdropFilter: 'blur(8px)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <span style={{ fontSize: 12, color: FAINT, fontWeight: 600 }}>CALL {i + 1}</span>
                 {calls.length > 1 && (
@@ -208,7 +193,7 @@ export default function CloseOutPage() {
                       flex: 1, padding: '9px 0', borderRadius: 9, fontSize: 13, fontWeight: 500, cursor: 'pointer',
                       background: c.type === t ? 'rgba(255,255,255,0.08)' : 'transparent',
                       color: c.type === t ? INK : SUB,
-                      border: `0.5px solid ${c.type === t ? '#444' : BORDER}`,
+                      border: `1px solid ${c.type === t ? '#444' : BORDER}`,
                     }}
                   >
                     {t === 'AAA' ? 'AAA' : t.charAt(0).toUpperCase() + t.slice(1)}
@@ -225,7 +210,7 @@ export default function CloseOutPage() {
                     value={c.amount}
                     onChange={(e) => updateCall(c.id, { amount: e.target.value })}
                     placeholder="0.00"
-                    style={{ width: '100%', background: '#141417', border: `0.5px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 15, outline: 'none', boxSizing: 'border-box' }}
+                    style={{ width: '100%', background: '#141417', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 15, outline: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
                 <div style={{ flex: 1 }}>
@@ -235,7 +220,7 @@ export default function CloseOutPage() {
                     value={c.miles}
                     onChange={(e) => updateCall(c.id, { miles: e.target.value })}
                     placeholder="0"
-                    style={{ width: '100%', background: '#141417', border: `0.5px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 15, outline: 'none', boxSizing: 'border-box' }}
+                    style={{ width: '100%', background: '#141417', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 15, outline: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
@@ -245,7 +230,7 @@ export default function CloseOutPage() {
                 value={c.note}
                 onChange={(e) => updateCall(c.id, { note: e.target.value })}
                 placeholder="Note (optional) — e.g. Jeep on highway"
-                style={{ width: '100%', background: '#141417', border: `0.5px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+                style={{ width: '100%', background: '#141417', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
               />
             </div>
           ))}
@@ -260,7 +245,7 @@ export default function CloseOutPage() {
 
           {/* ---- REVIEW SECTION: shows once at least one call has an amount ---- */}
           {validCalls.length > 0 && (
-            <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: '18px 20px', backdropFilter: 'blur(8px)' }}>
+            <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, padding: '18px 20px', backdropFilter: 'blur(8px)' }}>
               <p style={{ fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.5, margin: '0 0 14px' }}>
                 REVIEW TONIGHT'S CALLS
               </p>
@@ -268,9 +253,9 @@ export default function CloseOutPage() {
               {/* Each valid call as a clean line */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {validCalls.map((c) => (
-                  <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: '#141417', borderRadius: 10, border: `0.5px solid ${BORDER}` }}>
+                  <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', background: '#141417', borderRadius: 10, border: `1px solid ${BORDER}` }}>
                     {/* Type badge */}
-                    <span style={{ fontSize: 11, fontWeight: 600, color: TYPE_COLOR[c.type], background: 'rgba(255,255,255,0.05)', border: `0.5px solid ${BORDER}`, padding: '3px 9px', borderRadius: 20, flexShrink: 0 }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: TYPE_COLOR[c.type], background: 'rgba(255,255,255,0.05)', border: `1px solid ${BORDER}`, padding: '3px 9px', borderRadius: 20, flexShrink: 0 }}>
                       {TYPE_LABEL[c.type]}
                     </span>
 
@@ -300,7 +285,7 @@ export default function CloseOutPage() {
               </div>
 
               {/* Summary footer */}
-              <div style={{ marginTop: 16, paddingTop: 14, borderTop: `0.5px solid ${BORDER}` }}>
+              <div style={{ marginTop: 16, paddingTop: 14, borderTop: `1px solid ${BORDER}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
                   <span style={{ color: SUB, fontSize: 13 }}>
                     {validCalls.length} call{validCalls.length === 1 ? '' : 's'} · {totalMiles || 0} mi
@@ -312,7 +297,7 @@ export default function CloseOutPage() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {(['AAA', 'private', 'cash'] as CallType[]).map((t) =>
                     byType[t] > 0 ? (
-                      <span key={t} style={{ fontSize: 12, color: SUB, background: '#141417', border: `0.5px solid ${BORDER}`, padding: '4px 10px', borderRadius: 8 }}>
+                      <span key={t} style={{ fontSize: 12, color: SUB, background: '#141417', border: `1px solid ${BORDER}`, padding: '4px 10px', borderRadius: 8 }}>
                         <span style={{ color: TYPE_COLOR[t], fontWeight: 600 }}>{TYPE_LABEL[t]}</span>
                         {' '}{money(byType[t])}
                       </span>

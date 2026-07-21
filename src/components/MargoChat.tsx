@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const PANEL = 'rgba(20,20,23,0.72)'
-const BORDER = '#23232A'
+const PANEL = '#0E0E13'
+const BORDER = '#2B2B35'
 const INK = '#F4F5F7'
 const SUB = '#9A9CA3'
 const FAINT = '#5C5E66'
@@ -106,7 +106,7 @@ export default function MargoChat({ projectId, projectName }: { projectId?: stri
   }
 
   return (
-    <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 20, backdropFilter: 'blur(8px)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, padding: 20, backdropFilter: 'blur(8px)', display: 'flex', flexDirection: 'column', gap: 12 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <p style={{ color: INK, fontSize: 15, fontWeight: 600, margin: 0 }}>💬 Ask Margo</p>
         <p style={{ color: FAINT, fontSize: 11, margin: 0 }}>Your AI CFO — answers from your real numbers</p>
@@ -115,7 +115,7 @@ export default function MargoChat({ projectId, projectName }: { projectId?: stri
       {messages.length === 0 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {(projectId ? PROJECT_STARTERS : GENERAL_STARTERS).map((s) => (
-            <button key={s} onClick={() => ask(s)} style={{ background: 'transparent', border: `0.5px solid ${BORDER}`, color: SUB, borderRadius: 20, padding: '7px 14px', fontSize: 12, cursor: 'pointer' }}>
+            <button key={s} onClick={() => ask(s)} style={{ background: 'transparent', border: `1px solid ${BORDER}`, color: SUB, borderRadius: 20, padding: '7px 14px', fontSize: 12, cursor: 'pointer' }}>
               {s}
             </button>
           ))}
@@ -125,7 +125,7 @@ export default function MargoChat({ projectId, projectName }: { projectId?: stri
       {messages.length > 0 && (
         <div style={{ maxHeight: 320, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 10, paddingRight: 4 }}>
           {messages.map((m, i) => (
-            <div key={i} style={{ alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%', background: m.role === 'user' ? BLUE : '#141417', color: m.role === 'user' ? '#fff' : INK, border: m.role === 'user' ? 'none' : `0.5px solid ${BORDER}`, borderRadius: 12, padding: '10px 14px', fontSize: 14, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
+            <div key={i} style={{ alignSelf: m.role === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%', background: m.role === 'user' ? BLUE : '#141417', color: m.role === 'user' ? '#fff' : INK, border: m.role === 'user' ? 'none' : `1px solid ${BORDER}`, borderRadius: 12, padding: '10px 14px', fontSize: 14, lineHeight: 1.55, whiteSpace: 'pre-wrap' }}>
               {m.content}
             </div>
           ))}
@@ -142,7 +142,7 @@ export default function MargoChat({ projectId, projectName }: { projectId?: stri
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') ask(input) }}
           placeholder="Ask anything about your business finances…"
-          style={{ flex: 1, background: '#141417', border: `0.5px solid ${BORDER}`, borderRadius: 10, padding: '11px 14px', color: INK, fontSize: 14, outline: 'none' }}
+          style={{ flex: 1, background: '#141417', border: `1px solid ${BORDER}`, borderRadius: 10, padding: '11px 14px', color: INK, fontSize: 14, outline: 'none' }}
         />
         <button onClick={() => ask(input)} disabled={thinking} style={{ background: BLUE, color: '#fff', border: 'none', borderRadius: 10, padding: '11px 18px', fontSize: 14, fontWeight: 600, cursor: 'pointer', opacity: thinking ? 0.5 : 1 }}>
           Ask

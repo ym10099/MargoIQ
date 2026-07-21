@@ -5,16 +5,18 @@ import Papa from 'papaparse'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import Sidebar from '@/components/Sidebar'
 import { calculatePnL, calculateMonthly, type Transaction, type PnL, type MonthlyPnL } from '@/lib/calculations'
 import ProfitTrend from '@/components/ProfitTrend'
+import ExpenseDonut from '@/components/ExpenseDonut'
 import MargoChat from '@/components/MargoChat'
 
 type Insight = { number: string; reason: string; action: string }
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #16326B 0%, #0E2149 35%, #0A1226 60%, #0A0A0B 82%)'
-const PANEL = 'rgba(20,20,23,0.72)'
+const GLOW = '#000000'
+const PANEL = '#0E0E13'
 const PANEL_AI = 'rgba(12,15,13,0.72)'
-const BORDER = '#23232A'
+const BORDER = '#2B2B35'
 const BORDER_AI = '#1B4030'
 const INK = '#F4F5F7'
 const SUB = '#9A9CA3'
@@ -195,32 +197,16 @@ export default function DashboardPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: GLOW, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
-      <aside style={{ width: 200, background: 'transparent', borderRight: `0.5px solid ${BORDER}`, padding: '20px 14px', display: 'flex', flexDirection: 'column', gap: 5 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28, padding: '0 6px' }}>
-          <img src="/logo.png" alt="MargoiQ" style={{ height: 26 }} />
-        </div>
-        <NavItem label="Dashboard" href="/dashboard" active />
-        <NavItem label="Close out night" href="/close-out" />
-        <NavItem label="Purchase orders" href="/purchase-orders" />
-        <NavItem label="Projects" href="/projects" />
-        <NavItem label="Transactions" href="/transactions" />
-        <NavItem label="Weekly digest" href="/weekly-digest" />
-        <NavItem label="Settings" href="/settings" />
-        <div style={{ marginTop: 'auto' }}>
-          <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 12px', borderRadius: 9, color: SUB, fontSize: 14 }}>
-            Log out
-          </button>
-        </div>
-      </aside>
+      <Sidebar active="Dashboard" />
 
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `0.5px solid ${BORDER}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `1px solid ${BORDER}` }}>
           <div>
             <p style={{ fontSize: 15, fontWeight: 600, margin: 0, color: INK }}>Dashboard</p>
             <p style={{ fontSize: 12, color: FAINT, margin: 0 }}>Your profit at a glance</p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button onClick={handleClearAll} style={{ fontSize: 13, background: 'transparent', color: SUB, border: `0.5px solid ${BORDER}`, padding: '8px 14px', borderRadius: 9, fontWeight: 500, cursor: 'pointer' }}>
+            <button onClick={handleClearAll} style={{ fontSize: 13, background: 'transparent', color: SUB, border: `1px solid ${BORDER}`, padding: '8px 14px', borderRadius: 9, fontWeight: 500, cursor: 'pointer' }}>
               Clear data
             </button>
             <label style={{ cursor: 'pointer' }}>
@@ -237,7 +223,7 @@ export default function DashboardPage() {
 
           {!loading && pnl && pnl.transactionCount > 0 && (
             <>
-              <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 26, backdropFilter: 'blur(8px)' }}>
+              <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, padding: 26, backdropFilter: 'blur(8px)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                   <span style={{ fontSize: 13, color: SUB, fontWeight: 500 }}>Net profit</span>
                   <Pill
@@ -264,9 +250,12 @@ export default function DashboardPage() {
                 />
               </div>
 
-              <ProfitTrend data={monthly} />
+              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 14, alignItems: 'stretch' }}>
+                <ProfitTrend data={monthly} />
+                <ExpenseDonut />
+              </div>
 
-              <div style={{ background: PANEL_AI, border: `0.5px solid ${BORDER_AI}`, borderRadius: 16, padding: '22px 24px', backdropFilter: 'blur(8px)' }}>
+              <div style={{ background: PANEL_AI, border: `1px solid ${BORDER_AI}`, borderRadius: 16, padding: '22px 24px', backdropFilter: 'blur(8px)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 18 }}>
                   <div style={{ width: 26, height: 26, borderRadius: 8, background: GREEN_FILL, display: 'flex', alignItems: 'center', justifyContent: 'center', color: GREEN_TEXT, fontSize: 15 }}>✦</div>
                   <span style={{ color: INK, fontSize: 14, fontWeight: 600 }}>Your AI CFO</span>
@@ -283,7 +272,7 @@ export default function DashboardPage() {
                     <TypingRow bar={GREEN_TEXT} labelColor={GREEN_TEXT} label="THE NUMBER" text={insight.number} color={INK} delay={0} />
                     <TypingRow bar="#33476B" labelColor={SUB} label="WHY" text={insight.reason} color="#C2C8D2" delay={1} />
                     <TypingRow bar={BLUE_TEXT} labelColor={BLUE_TEXT} label="RECOMMENDED" text={insight.action} color={INK} delay={2} />
-                    <button onClick={getInsight} style={{ alignSelf: 'flex-start', background: 'transparent', color: SUB, border: `0.5px solid ${BORDER}`, padding: '7px 13px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
+                    <button onClick={getInsight} style={{ alignSelf: 'flex-start', background: 'transparent', color: SUB, border: `1px solid ${BORDER}`, padding: '7px 13px', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>
                       Regenerate
                     </button>
                   </div>
@@ -296,7 +285,7 @@ export default function DashboardPage() {
 
           {!loading && pnl && pnl.transactionCount > 0 && <MargoChat />}
           {!loading && pnl && pnl.transactionCount === 0 && (
-            <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
+            <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
               <p style={{ color: INK, fontSize: 16, fontWeight: 600, margin: 0 }}>No transactions yet</p>
               <p style={{ color: SUB, fontSize: 14, margin: '8px 0 0' }}>Download your transactions from your bank's website (look for “Export” or “Download” and choose CSV format), then click Upload CSV above. MargoiQ instantly shows your income, expenses, and profit. Works with Chase, Bank of America, Wells Fargo, QuickBooks, and most banks.</p>
             </div>
@@ -317,7 +306,7 @@ export default function DashboardPage() {
 
 function Pill({ text, fill, border, color }: { text: string; fill: string; border: string; color: string }) {
   return (
-    <span style={{ fontSize: 11, background: fill, color, border: `0.5px solid ${border}`, padding: '3px 10px', borderRadius: 20, fontWeight: 500 }}>
+    <span style={{ fontSize: 11, background: fill, color, border: `1px solid ${border}`, padding: '3px 10px', borderRadius: 20, fontWeight: 500 }}>
       {text}
     </span>
   )
@@ -364,7 +353,7 @@ function NavItem({ label, active, href }: { label: string; active?: boolean; hre
 
 function MetricCard({ label, value, sub, dot }: { label: string; value: string; sub?: string; dot: string }) {
   return (
-    <div style={{ background: 'rgba(20,20,23,0.72)', border: '0.5px solid #23232A', borderRadius: 12, padding: '16px 18px', backdropFilter: 'blur(8px)' }}>
+    <div style={{ background: '#0E0E13', border: '1px solid #2B2B35', borderRadius: 12, padding: '16px 18px', backdropFilter: 'blur(8px)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
         <span style={{ width: 7, height: 7, borderRadius: '50%', background: dot }} />
         <span style={{ fontSize: 12, color: '#9A9CA3' }}>{label}</span>

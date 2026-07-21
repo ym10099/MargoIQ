@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import Sidebar from '@/components/Sidebar'
 
-const GLOW = 'radial-gradient(120% 80% at 50% 100%, #16326B 0%, #0E2149 35%, #0A1226 60%, #0A0A0B 82%)'
-const PANEL = 'rgba(20,20,23,0.72)'
-const BORDER = '#23232A'
+const GLOW = '#000000'
+const PANEL = '#0E0E13'
+const BORDER = '#2B2B35'
 const INK = '#F4F5F7'
 const SUB = '#9A9CA3'
 const FAINT = '#5C5E66'
@@ -98,27 +99,11 @@ export default function ProjectsPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: GLOW, fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
       {/* Sidebar */}
-      <aside style={{ width: 200, background: 'transparent', borderRight: `0.5px solid ${BORDER}`, padding: '20px 14px', display: 'flex', flexDirection: 'column', gap: 5 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 28, padding: '0 6px' }}>
-          <img src="/logo.png" alt="MargoiQ" style={{ height: 26 }} />
-        </div>
-        <NavItem label="Dashboard" href="/dashboard" />
-        <NavItem label="Close out night" href="/close-out" />
-        <NavItem label="Purchase orders" href="/purchase-orders" />
-        <NavItem label="Projects" href="/projects" active />
-        <NavItem label="Transactions" href="/transactions" />
-        <NavItem label="Weekly digest" href="/weekly-digest" />
-        <NavItem label="Settings" href="/settings" />
-        <div style={{ marginTop: 'auto' }}>
-          <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', background: 'transparent', border: 'none', cursor: 'pointer', padding: '9px 12px', borderRadius: 9, color: SUB, fontSize: 14 }}>
-            Log out
-          </button>
-        </div>
-      </aside>
+      <Sidebar active="Projects" />
 
       {/* Main */}
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `0.5px solid ${BORDER}` }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 28px', borderBottom: `1px solid ${BORDER}` }}>
           <div>
             <p style={{ fontSize: 15, fontWeight: 600, margin: 0, color: INK }}>Projects</p>
             <p style={{ fontSize: 12, color: FAINT, margin: 0 }}>See what each project actually makes you</p>
@@ -132,20 +117,20 @@ export default function ProjectsPage() {
 
           {/* New project form */}
           {showForm && (
-            <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 14, padding: 18, backdropFilter: 'blur(8px)' }}>
+            <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 14, padding: 18, backdropFilter: 'blur(8px)' }}>
               <p style={{ fontSize: 11, color: FAINT, fontWeight: 600, letterSpacing: 0.5, margin: '0 0 12px' }}>NEW PROJECT</p>
               <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
                 <input
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                   placeholder="Project name (e.g. Nike Campaign)"
-                  style={{ flex: 2, background: '#141417', border: `0.5px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 14, outline: 'none' }}
+                  style={{ flex: 2, background: '#141417', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 14, outline: 'none' }}
                 />
                 <input
                   value={newClient}
                   onChange={(e) => setNewClient(e.target.value)}
                   placeholder="Client (optional)"
-                  style={{ flex: 1, background: '#141417', border: `0.5px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 14, outline: 'none' }}
+                  style={{ flex: 1, background: '#141417', border: `1px solid ${BORDER}`, borderRadius: 9, padding: '10px 12px', color: INK, fontSize: 14, outline: 'none' }}
                 />
               </div>
               <button onClick={createProject} style={{ background: '#fff', color: '#0A0A0B', border: 'none', padding: '10px 18px', borderRadius: 9, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
@@ -160,7 +145,7 @@ export default function ProjectsPage() {
 
           {/* Empty state */}
           {!loading && projects.length === 0 && (
-            <div style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
+            <div style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 16, padding: 40, textAlign: 'center', backdropFilter: 'blur(8px)' }}>
               <p style={{ color: INK, fontSize: 15, fontWeight: 600, margin: 0 }}>No projects yet</p>
               <p style={{ color: SUB, fontSize: 13, margin: '8px 0 0' }}>See profit per job or client. Create a project (like “Downtown tow contract” or “Spring ad campaign”), then assign transactions to it from the Transactions page — MargoiQ shows exactly which work makes you money.</p>
             </div>
@@ -170,12 +155,12 @@ export default function ProjectsPage() {
           {stats.map((p) => {
             const profitable = p.net >= 0
             return (
-              <div key={p.id} onClick={() => router.push(`/projects/${p.id}`)} style={{ background: PANEL, border: `0.5px solid ${BORDER}`, borderRadius: 14, padding: '18px 20px', backdropFilter: 'blur(8px)', cursor: 'pointer' }}>
+              <div key={p.id} onClick={() => router.push(`/projects/${p.id}`)} style={{ background: PANEL, border: `1px solid ${BORDER}`, borderRadius: 14, padding: '18px 20px', backdropFilter: 'blur(8px)', cursor: 'pointer' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                       <span style={{ color: INK, fontSize: 16, fontWeight: 600 }}>{p.name}</span>
-                      <span style={{ fontSize: 11, color: profitable ? GREEN_TEXT : RED_TEXT, background: profitable ? '#0E2A1C' : '#2A1116', border: `0.5px solid ${profitable ? '#1F5C3E' : '#5C2230'}`, padding: '2px 9px', borderRadius: 20 }}>
+                      <span style={{ fontSize: 11, color: profitable ? GREEN_TEXT : RED_TEXT, background: profitable ? '#0E2A1C' : '#2A1116', border: `1px solid ${profitable ? '#1F5C3E' : '#5C2230'}`, padding: '2px 9px', borderRadius: 20 }}>
                         {profitable ? 'Profitable' : 'Losing money'}
                       </span>
                     </div>
@@ -223,7 +208,7 @@ function NavItem({ label, active, href }: { label: string; active?: boolean; hre
 
 function Stat({ label, value, color, big }: { label: string; value: string; color: string; big?: boolean }) {
   return (
-    <div style={{ background: '#141417', border: '0.5px solid #23232A', borderRadius: 10, padding: '12px 14px' }}>
+    <div style={{ background: '#141417', border: '1px solid #2B2B35', borderRadius: 10, padding: '12px 14px' }}>
       <p style={{ fontSize: 11, color: '#5C5E66', fontWeight: 600, letterSpacing: 0.4, margin: '0 0 4px' }}>{label.toUpperCase()}</p>
       <p style={{ fontSize: big ? 20 : 16, fontWeight: 600, margin: 0, color }}>{value}</p>
     </div>
