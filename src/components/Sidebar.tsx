@@ -21,6 +21,7 @@ const ICONS: Record<string, JSX.Element> = {
   projects: icon('M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z'),
   transactions: icon('M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01'),
   digest: icon('M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zM22 6l-10 7L2 6'),
+  goals: icon('M12 2v20M2 12h20M12 7a5 5 0 015 5M12 17a5 5 0 01-5-5'),
   settings: icon('M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008.6 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z'),
 }
 
@@ -32,7 +33,10 @@ const GROUPS = [
     { name: 'Projects', href: '/projects', ic: 'projects' },
     { name: 'Transactions', href: '/transactions', ic: 'transactions' },
   ]},
-  { label: 'INSIGHTS', items: [{ name: 'Weekly digest', href: '/weekly-digest', ic: 'digest' }] },
+  { label: 'INSIGHTS', items: [
+    { name: 'Goals', href: '/goals', ic: 'goals' },
+    { name: 'Weekly digest', href: '/weekly-digest', ic: 'digest' },
+  ]},
 ]
 
 export default function Sidebar({ active }: { active: string }) {

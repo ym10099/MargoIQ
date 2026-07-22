@@ -34,12 +34,13 @@ export default function MargoChat({ projectId, projectName }: { projectId?: stri
 
   useEffect(() => {
     async function load() {
-      const [{ data }, { data: projects }] = await Promise.all([
+      const [{ data }, { data: projects }, { data: goals }] = await Promise.all([
         supabase
           .from('transactions')
           .select('txn_date, description, amount, type, project_id')
           .order('txn_date', { ascending: true }),
         supabase.from('projects').select('id, name'),
+        supabase.from('goals').select('title, type, target, deadline, why'),
       ])
       if (!data || data.length === 0) {
         setSummary('The user has not uploaded any transactions yet.')
@@ -75,9 +76,12 @@ export default function MargoChat({ projectId, projectName }: { projectId?: stri
           })
           .join('\n')
       }
+      const goalLines = goals && goals.length > 0
+        ? goals.map((g: any) => `${g.title}: ${g.type} target ${g.target}${g.deadline ? ` by ${g.deadline}` : ''}${g.why ? ` (why: ${g.why})` : ''}`).join('\n')
+        : 'No goals set yet.'
       const unassigned = data.filter((t) => !t.project_id).length
       const focus = projectId && projectName ? `FOCUS: The user is currently viewing the project "${projectName}". Prioritize answering about this project unless asked otherwise.\n\n` : ''
-      setSummary(`${focus}MONTHLY TOTALS:\n${monthLines}\n\nTOP EXPENSES (all time):\n${topExpenses}\n\nPROJECTS (per-job profit):\n${projectLines}\nUnassigned transactions: ${unassigned}\n\nTOTAL TRANSACTIONS: ${data.length}`)
+      setSummary(`${focus}MONTHLY TOTALS:\n${monthLines}\n\nTOP EXPENSES (all time):\n${topExpenses}\n\nPROJECTS (per-job profit):\n${projectLines}\nUnassigned transactions: ${unassigned}\n\nTHE USER'S GOALS:\n${goalLines}\n\nTOTAL TRANSACTIONS: ${data.length}`)
     }
     load()
   }, [])
