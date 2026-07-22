@@ -16,7 +16,7 @@ const GENERAL_STARTERS = [
   'How did I do last month?',
   'What is my biggest expense?',
   'Where can I save money?',
-  'Explain my numbers like I am new to business',
+  'What is my profit margin, and how healthy is it?',
 ]
 const PROJECT_STARTERS = [
   'How is this project doing?',

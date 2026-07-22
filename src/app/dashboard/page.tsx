@@ -261,7 +261,6 @@ export default function DashboardPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 18 }}>
                   <div style={{ width: 26, height: 26, borderRadius: 8, background: GREEN_FILL, display: 'flex', alignItems: 'center', justifyContent: 'center', color: GREEN_TEXT, fontSize: 15 }}>✦</div>
                   <span style={{ color: INK, fontSize: 14, fontWeight: 600 }}>Your AI CFO</span>
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: FAINT }}>Powered by Claude</span>
                 </div>
                 {!insight && !insightLoading && (
                   <button onClick={getInsight} style={{ background: '#fff', color: '#0A0A0B', border: 'none', padding: '11px 20px', borderRadius: 9, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
